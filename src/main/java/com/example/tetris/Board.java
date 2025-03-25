@@ -27,21 +27,25 @@ public class Board extends Application {
     private static final int WIDTH = 10;
     private static final int SQUARE_SIZE = 30; // Rozmiar pojedynczego kwadratu
     public int[][] TetrisBoard; ;
+    public int[][] TetrisChange;
     public GridPane gridPane;
     @Override
     public void start(Stage primaryStage) {
         gridPane = new GridPane();
-        TetrisBoard = new int[10][23];
+        TetrisBoard = new int[10][24];
+        TetrisBoard[0][0] = 2;
+        TetrisBoard[0][1] = 2;
+        TetrisBoard[0][2] = 2;
+        TetrisBoard[1][2] = 2;
         for (int row = 0; row < HEIGHT; row++) {
             for (int col = 0; col < WIDTH; col++) {
                 Rectangle square = new Rectangle(SQUARE_SIZE, SQUARE_SIZE);
-                if (TetrisBoard[col][row] == 0) square.setFill(Color.WHITE);
+                if (TetrisBoard[col][row+2] == 0) square.setFill(Color.WHITE);
                 else square.setFill(Color.BLACK);
                 gridPane.add(square, col, row);
             }
         }
-
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> Update(primaryStage)));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.3), e -> Update(primaryStage)));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
 
@@ -52,15 +56,40 @@ public class Board extends Application {
     }
     public void Update(Stage primaryStage)
     {
-        if(!isBlockDropping) newBlock();
+        //if(!isBlockDropping) newBlock();
+        DropDown();
         for (int row = 0; row < HEIGHT; row++) {
             for (int col = 0; col < WIDTH; col++) {
                 Rectangle square = new Rectangle(SQUARE_SIZE, SQUARE_SIZE);
-                if (TetrisBoard[col][row] == 0) square.setFill(Color.WHITE);
+                if (TetrisBoard[col][row+2] == 1) square.setFill(Color.WHITE);
                 else square.setFill(Color.BLACK);
                 gridPane.add(square, col, row);
             }
         }
+
+
+    }
+    public void DropDown() {
+        boolean BlockDropped = false;
+
+        TetrisChange = new int[10][23];
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                if (TetrisBoard[i][j] == 2) {
+                    TetrisChange[i][j + 1] = 2;
+                    if (j + 2 > HEIGHT || TetrisChange[i][j + 2] == 1) BlockDropped = true;
+                }
+            }
+        }
+        if (BlockDropped) {
+            for (int i = 0; i < WIDTH; i++) {
+                for (int j = 0; j < HEIGHT; j++) {
+                    if(TetrisChange[i][j] ==2) TetrisChange[i][j] = 1;
+                }
+            }
+        }
+        TetrisBoard = TetrisChange;
+
     }
     public void newBlock()
     {
@@ -77,6 +106,7 @@ public class Board extends Application {
             case 5: newOne = new T_Piece();
             case 6: newOne = new Long();
         }
+
 
     }
     public static void main(String[] args) {
