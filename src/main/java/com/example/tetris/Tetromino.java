@@ -15,8 +15,5 @@ public abstract class Tetromino
     }
 
 
-    int returnBoard(int a, int b) {
-        return tileRotationSchemes[tileRotationState][a][b];
-    }
 }
 
