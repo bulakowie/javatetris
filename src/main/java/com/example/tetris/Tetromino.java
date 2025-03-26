@@ -12,7 +12,11 @@ public abstract class Tetromino
     {
         if (a==0) a=4;
         return tileRotationSchemes[a-1];
+    }
 
+
+    int returnBoard(int a, int b) {
+        return tileRotationSchemes[tileRotationState][a][b];
     }
 }
 

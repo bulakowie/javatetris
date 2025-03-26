@@ -42,6 +42,10 @@ public class Board extends Application {
                 gridPane.add(square, col, row);
             }
         }
+        TetrisBoard[0][0]  = 2;
+        TetrisBoard[0][1]  = 2;
+        TetrisBoard[0][2]  = 2;
+        TetrisBoard[0][3]  = 2;
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.2), e -> Update(primaryStage)));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
@@ -51,9 +55,12 @@ public class Board extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+
+
     public void Update(Stage primaryStage)
     {
-        //if(!isBlockDropping) newBlock();
+       // if(!isBlockDropping) newBlock();
         DropDown();
         for (int row = 0; row < HEIGHT; row++) {
             for (int col = 0; col < WIDTH; col++) {
@@ -64,6 +71,10 @@ public class Board extends Application {
             }
         }
     }
+
+
+
+
     public void DropDown() {
         boolean BlockDropped = false;
 
@@ -78,11 +89,11 @@ public class Board extends Application {
             }
         }
         if (BlockDropped) {
-            System.out.println(123.456);
+          //  System.out.println(123.456);
             for (int i = 0; i < WIDTH; i++) {
                 for (int j = 0; j < HEIGHT+3; j++) {
                     if(TetrisChange[i][j] == 2) {
-                        System.out.println(123.456);
+                       // System.out.println(123.456);
                         TetrisChange[i][j] = 1;
                     }
                 }
@@ -91,17 +102,27 @@ public class Board extends Application {
         TetrisBoard = TetrisChange;
         if (BlockDropped)
         {
+            TetrisBoard[3][0]  = 2;
+            TetrisBoard[3][1]  = 2;
+            TetrisBoard[3][2]  = 2;
+            TetrisBoard[4][2]  = 2;
+            isBlockDropping = false;
             BlockDropped = false;
         }
 
 
     }
+
+
+
+
     public void newBlock()
     {
+        isBlockDropping = true;
         Random random = new Random();
         int n = random.nextInt(7);
-        Tetromino newOne = new BlueL();
-        switch(n)
+        BlueL b = new BlueL();
+       /* switch(n)
         {
             case 0: newOne = new BlueL();
             case 1: newOne = new OrangeL();
@@ -110,12 +131,12 @@ public class Board extends Application {
             case 4: newOne = new Square();
             case 5: newOne = new T_Piece();
             case 6: newOne = new Long();
-        }
+        } */
         for (int i=0; i<3; i++)
             for (int j = 0; j<3; j++)
             {
-
-                   TetrisBoard[i][j] = 2;
+                    if (b.returnBoard(i,j)== 1)
+                        TetrisBoard[i][j] = 2;
             }
 
 
