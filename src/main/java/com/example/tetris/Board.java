@@ -45,7 +45,7 @@ penis = true;
         TetrisBoard[0][1]  = 2;
         TetrisBoard[0][2]  = 2;
         TetrisBoard[0][3]  = 2; */
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.2), e -> Update(primaryStage)));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.1), e -> Update(primaryStage)));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
 
@@ -144,7 +144,7 @@ penis = true;
                 for (int j = 0; j < HEIGHT + 3; j++) {
                     if (TetrisBoard[i][j] == 2) {
                         TetrisChange[i][j + 1] = 2;
-                        if (j + 1 > HEIGHT || TetrisBoard[i][j + 2] == 1) BlockDropped = true;
+                        if (j > HEIGHT || TetrisBoard[i][j + 1] == 1) BlockDropped = true;
                     }
                     if (TetrisBoard[i][j] == 1) TetrisChange[i][j] = 1;
                 }
@@ -154,14 +154,14 @@ penis = true;
                 penis = true;
                 for (int i = 0; i < WIDTH; i++) {
                     for (int j = 0; j < HEIGHT + 3; j++) {
-                        if (TetrisChange[i][j] == 2) {
+                        if (TetrisBoard[i][j] == 2) {
                             // System.out.println(123.456);
-                            TetrisChange[i][j] = 1;
+                            TetrisBoard[i][j] = 1;
                         }
                     }
                 }
             }
-            TetrisBoard = TetrisChange;
+            else TetrisBoard = TetrisChange;
             if (BlockDropped) {
            /* TetrisBoard[3][0]  = 2;
             TetrisBoard[3][1]  = 2;
