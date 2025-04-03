@@ -16,6 +16,7 @@ import java.util.Random;
 
 public class Board extends Application {
 
+    public FIndBestMove bestMove;
     public boolean isBlockDropping = false;
     private static final int HEIGHT = 20; // Rozmiar tablicy (8x8)
     private static final int WIDTH = 10;
@@ -144,13 +145,14 @@ penis = true;
                 for (int j = 0; j < HEIGHT + 3; j++) {
                     if (TetrisBoard[i][j] == 2) {
                         TetrisChange[i][j + 1] = 2;
-                        if (j > HEIGHT || TetrisBoard[i][j + 1] == 1) BlockDropped = true;
+                        if (j + 1 == HEIGHT + 2) BlockDropped = true;
+                        else if (TetrisBoard[i][j + 1] == 1) BlockDropped = true;
                     }
                     if (TetrisBoard[i][j] == 1) TetrisChange[i][j] = 1;
                 }
             }
             if (BlockDropped) {
-                //  System.out.println(123.456);
+                  System.out.println(123.456);
                 penis = true;
                 for (int i = 0; i < WIDTH; i++) {
                     for (int j = 0; j < HEIGHT + 3; j++) {
