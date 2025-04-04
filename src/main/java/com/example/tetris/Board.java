@@ -49,7 +49,7 @@ public class Board extends Application {
         TetrisBoard[0][1]  = 2;
         TetrisBoard[0][2]  = 2;
         TetrisBoard[0][3]  = 2; */
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.02), e -> Update(primaryStage)));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.15), e -> Update(primaryStage)));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
 
@@ -109,25 +109,13 @@ public class Board extends Application {
     }
     public void LineDeletion()
     {
-        for (int row = 0; row < HEIGHT; row++) {
-            for (int col = 0; col < WIDTH; col++) {
-                if (TetrisBoard[col][row] != 1) break;
-                else if (col == 9)
-                {
-                    for (int col2 = 0; col2>WIDTH ; col2++)
-                    {
-                        TetrisBoard[col2][row] = 0;
-                    }
-                }
-            }
-        }
+
     }
     public void Update(Stage primaryStage) {
 
 
      //   LineDeletion();
         if(!isBlockDropping) newBlock();
-        DropDown();
         for (int row = 0; row < HEIGHT; row++) {
             for (int col = 0; col < WIDTH; col++) {
                 Rectangle square = new Rectangle(SQUARE_SIZE, SQUARE_SIZE);
@@ -136,6 +124,7 @@ public class Board extends Application {
                 gridPane.add(square, col, row);
             }
         }
+        DropDown();
 
     }
     public void DropDown() {
@@ -215,7 +204,7 @@ public class Board extends Application {
                 if (TetrisBoard[i][j]==1) TetrisChange2[i][j]=1;
             }
         }
-        System.out.println(topUp + " " + topLeft);
+        //System.out.println(topUp + " " + topLeft);
         for (int i=0; i<4; i++)
             for (int j = 0; j<4; j++)
             {
@@ -243,7 +232,7 @@ public class Board extends Application {
     if (ROTATE)
     {TetrisBoard = TetrisChange2;
         rotationValue = placeholderRotationValue;}
-    else System.out.println("penisisko");
+   // else System.out.println("penisisko");
     }
     public void newBlock() {
             startingIndex = 4;
@@ -251,10 +240,10 @@ public class Board extends Application {
         Tetromino[] pool = {new BlueL(),new OrangeL(), new GreenZ(), new RedZ(), new Square(),new T_Piece(), new Long()};
         isBlockDropping = true;
         Random random = new Random();
-        int n = random.nextInt(4);
+        int n = random.nextInt(7);
         //n= 0;
         Tetromino fallingBlock =  pool[n];
-        System.out.println(fallingBlock.toString());
+     //   System.out.println(fallingBlock.toString());
         expectedMoveIndex = bestMove.getMove(TetrisBoard,fallingBlock).component1();
         expectedMoveRotation = bestMove.getMove(TetrisBoard,fallingBlock).component2();
         for (int i=0; i<4; i++)
@@ -274,7 +263,7 @@ public class Board extends Application {
                     }
             }
 
-        System.out.println(expectedMoveIndex);
+      //  System.out.println(expectedMoveIndex);
         activeBlock = fallingBlock;
         rotationValue = 0;
 
