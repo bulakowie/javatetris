@@ -26,12 +26,15 @@ public class Board extends Application {
     public GridPane gridPane;
     Tetromino activeBlock;
     public int rotationValue;
-    public  boolean penis;
     public boolean isBlockBig;
+    public int expectedMoveIndex;
+    public int expectedMoveRotation;
+    public int startingIndex;
     @Override
     public void start(Stage primaryStage) {
-penis = true;
         gridPane = new GridPane();
+        bestMove = new FIndBestMove(gridPane);
+
         TetrisBoard = new int[10][24];
 
         for (int row = 0; row < HEIGHT; row++) {
@@ -46,7 +49,7 @@ penis = true;
         TetrisBoard[0][1]  = 2;
         TetrisBoard[0][2]  = 2;
         TetrisBoard[0][3]  = 2; */
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.1), e -> Update(primaryStage)));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.02), e -> Update(primaryStage)));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
 
@@ -55,10 +58,7 @@ penis = true;
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-
-    public void moveBlockLeft()
-    {
+    public void moveBlockLeft() {
         boolean canMove = true;
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT+3; j++) {
@@ -83,10 +83,7 @@ penis = true;
             TetrisBoard = TetrisChange;
         }
     }
-
-
-    public void moveBlockRight()
-    {
+    public void moveBlockRight() {
         boolean canMove = true;
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT+3; j++) {
@@ -110,12 +107,25 @@ penis = true;
             TetrisBoard = TetrisChange;
         }
     }
-
-
-
-    public void Update(Stage primaryStage)
+    public void LineDeletion()
     {
+        for (int row = 0; row < HEIGHT; row++) {
+            for (int col = 0; col < WIDTH; col++) {
+                if (TetrisBoard[col][row] != 1) break;
+                else if (col == 9)
+                {
+                    for (int col2 = 0; col2>WIDTH ; col2++)
+                    {
+                        TetrisBoard[col2][row] = 0;
+                    }
+                }
+            }
+        }
+    }
+    public void Update(Stage primaryStage) {
 
+
+     //   LineDeletion();
         if(!isBlockDropping) newBlock();
         DropDown();
         for (int row = 0; row < HEIGHT; row++) {
@@ -128,18 +138,23 @@ penis = true;
         }
 
     }
-
-
-
-
     public void DropDown() {
         boolean BlockDropped = false;
 
         Random random = new Random();
-        int n = random.nextInt(3);
-        if (n == 0) rotation(1);
-        if (n == 1)rotation(2);
-        else {
+       // System.out.println(expectedMoveRotation);
+        if (rotationValue !=expectedMoveRotation) rotation(1);
+        if (startingIndex>expectedMoveIndex)
+        {
+            moveBlockLeft();
+            startingIndex--;
+        }
+        else if (startingIndex<expectedMoveIndex)
+        {
+            moveBlockRight();
+            startingIndex++;
+        }
+
             TetrisChange = new int[10][23];
             for (int i = 0; i < WIDTH; i++) {
                 for (int j = 0; j < HEIGHT + 3; j++) {
@@ -152,8 +167,7 @@ penis = true;
                 }
             }
             if (BlockDropped) {
-                  System.out.println(123.456);
-                penis = true;
+                  //System.out.println(123.456);
                 for (int i = 0; i < WIDTH; i++) {
                     for (int j = 0; j < HEIGHT + 3; j++) {
                         if (TetrisBoard[i][j] == 2) {
@@ -172,10 +186,10 @@ penis = true;
                 isBlockDropping = false;
                 BlockDropped = false;
             }
-        }
-    }
-    public void rotation(int n)
-    {
+
+            }
+
+    public void rotation(int n) {
       //  if (n == 1) System.out.print("lewo");
        // else System.out.print("prawo");
 
@@ -222,12 +236,6 @@ penis = true;
                         else TetrisChange2[i+topLeft][j+topUp] = 2;
                     }
                 }
-                if (penis)
-                {
-                    if (!ROTATE) System.out.println(i+topLeft);
-                    if (!ROTATE) System.out.println(j+topUp);
-                    if (!ROTATE) penis = false;
-                }
 
 
             }
@@ -237,33 +245,36 @@ penis = true;
         rotationValue = placeholderRotationValue;}
     else System.out.println("penisisko");
     }
-
-
-
-    public void newBlock()
-    {
+    public void newBlock() {
+            startingIndex = 4;
+        int offset = 4;
         Tetromino[] pool = {new BlueL(),new OrangeL(), new GreenZ(), new RedZ(), new Square(),new T_Piece(), new Long()};
         isBlockDropping = true;
         Random random = new Random();
-        int n = random.nextInt(7);
+        int n = random.nextInt(4);
+        //n= 0;
         Tetromino fallingBlock =  pool[n];
         System.out.println(fallingBlock.toString());
+        expectedMoveIndex = bestMove.getMove(TetrisBoard,fallingBlock).component1();
+        expectedMoveRotation = bestMove.getMove(TetrisBoard,fallingBlock).component2();
         for (int i=0; i<4; i++)
             for (int j = 0; j<4; j++)
             {
                     if (i !=3 && j!=3) {
                         if (fallingBlock.tileRotationSchemes[0][i][j] == 1)
-                            TetrisBoard[i][j+1] = 2;
+                            TetrisBoard[i+offset][j+1] = 2;
                         isBlockBig = false;
                     }
                     else if (n== 4 || n== 6)
                     {
                         isBlockBig = true;
                         if (fallingBlock.tileRotationSchemes[0][i][j] == 1)
-                            TetrisBoard[i][j+1] = 2;
+                            TetrisBoard[i+offset][j+1] = 2;
 
                     }
             }
+
+        System.out.println(expectedMoveIndex);
         activeBlock = fallingBlock;
         rotationValue = 0;
 
