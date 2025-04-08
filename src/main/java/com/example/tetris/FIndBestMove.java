@@ -49,7 +49,7 @@ public class FIndBestMove {
                         if (j ==22) startcounting = false;
                     }
                 }
-                int solutionNumber = gapsNumber * 6 - highestPointofBlock *2;
+                int solutionNumber = gapsNumber * 6 - highestPointofBlock *3;
                 if (solutionNumber < bestSolution && canBeTrue)
                 {
                  //   System.out.println(gapsNumber);
@@ -68,7 +68,7 @@ public class FIndBestMove {
                placeholderBoard = new int[10][23];
             }
         }
-        System.out.println(bestSmallestHeight + " " + bestGapsLeft);
+        System.out.println(bestMoveIndex + " " + bestRotationIndex);
         return new Pair<Integer, Integer>(bestMoveIndex,bestRotationIndex);
     }
     public int[][] hardDrop (int[][] board, Tetromino block, int rotation, int position)
@@ -86,7 +86,8 @@ public class FIndBestMove {
                 else if (block instanceof Long || block instanceof Square)
                 {
                     if (block.tileRotationSchemes[rotation][i-position][j] == 1)
-                        board2[i][j] = 5;
+                        if (i==10) break;
+                        else board2[i][j] = 5;
 
                 }
             }
