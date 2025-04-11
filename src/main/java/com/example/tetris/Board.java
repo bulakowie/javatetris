@@ -31,6 +31,10 @@ public class Board extends Application {
     public int expectedMoveRotation;
     public int startingIndex;
     public boolean canGo = true;
+    public boolean updateGraphic = false;
+    public Tetromino heldBlock = null;
+    public Tetromino nextBlock =null;
+    public int frameCounter = 0;
     @Override
     public void start(Stage primaryStage) {
         gridPane = new GridPane();
@@ -43,6 +47,7 @@ public class Board extends Application {
                 Rectangle square = new Rectangle(SQUARE_SIZE, SQUARE_SIZE);
                 if (TetrisBoard[col][row+2] == 0) square.setFill(Color.WHITE);
                 else square.setFill(Color.BLACK);
+
                 gridPane.add(square, col, row);
             }
         }
@@ -50,7 +55,7 @@ public class Board extends Application {
         TetrisBoard[0][1]  = 2;
         TetrisBoard[0][2]  = 2;
         TetrisBoard[0][3]  = 2; */
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.1), e -> Update(primaryStage)));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.05), e -> Update(primaryStage)));
         timeline.pause();
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
@@ -125,7 +130,7 @@ public class Board extends Application {
                 }
                 if (deleteline)
                 {
-                    System.out.println("KURWA");
+                    System.out.println("delete");
                     for (int j=0; j<WIDTH; j++) TetrisBoard[j][i] = 0;
                     for (int k=i-1; k>=0; k--)
                     {
@@ -136,13 +141,20 @@ public class Board extends Application {
             }
     }
     public void Update(Stage primaryStage) {
-
-
-        LineDeletion();
-        if(!isBlockDropping)
+        frameCounter++;
+        if (updateGraphic)
         {
-            LineDeletion();
-            newBlock();
+            if (frameCounter == 30)
+            {
+                frameCounter = 0;
+                gridPane = new GridPane();
+                Scene scene = new Scene(gridPane, WIDTH* SQUARE_SIZE + 300, HEIGHT* SQUARE_SIZE);
+                primaryStage.setTitle("Tetris");
+                primaryStage.setScene(scene);
+                primaryStage.show();
+
+            }
+
             for (int row = 0; row < HEIGHT; row++) {
                 for (int col = 0; col < WIDTH; col++) {
                     Rectangle square = new Rectangle(SQUARE_SIZE, SQUARE_SIZE);
@@ -156,27 +168,22 @@ public class Board extends Application {
                         gridPane.add(square, col, row);
                     }
 
-
                 }
             }
+            updateGraphic = false;
         }
-        for (int row = 0; row < HEIGHT; row++) {
-            for (int col = 0; col < WIDTH; col++) {
-                Rectangle square = new Rectangle(SQUARE_SIZE, SQUARE_SIZE);
-                if (TetrisBoard[col][row+2] == 0) {
-                    square.setFill(Color.WHITE);
-                    gridPane.add(square, col, row);
-                }
-                else if (TetrisBoard[col][row+2] == 2)
-                {
-                    square.setFill(Color.BLACK);
-                    gridPane.add(square, col, row);
-                }
+        else {
+            DropDown();
+            LineDeletion();
+            if (!isBlockDropping) {
 
+                LineDeletion();
+                newBlock();
 
             }
+            updateGraphic = true;
         }
-        DropDown();
+
 
     }
     public void DropDown() {
@@ -291,12 +298,12 @@ public class Board extends Application {
         }
         if (moveToTheLeft)
         {
-            System.out.print("JESTTT");
+          //  System.out.print("JESTTT");
             for (int i = 0; i < WIDTH; i++) {
                 for (int j = 0; j < HEIGHT+3; j++) {
                     if(TetrisChange2[i][j] == 2) {
-                       TetrisChange2[i-1][j] =2;
-                       TetrisChange2[i][j] = 0;
+                   //    TetrisChange2[i-1][j] =2;
+                    //   TetrisChange2[i][j] = 0;
                     }
                 }
             }
@@ -309,26 +316,46 @@ public class Board extends Application {
     }
     public void newBlock() {
         System.gc();
+
             startingIndex = 4;
         int offset = 4;
-        Tetromino[] pool = {new BlueL(),new OrangeL(), new GreenZ(), new RedZ(), new Square(),new T_Piece(), new Long()};
+        Tetromino[] pool = {new BlueL(),new OrangeL(), new GreenZ(), new RedZ(), new T_Piece(),new Square(), new Long()};
         isBlockDropping = true;
         Random random = new Random();
-        int n = random.nextInt(4);
-      //  int n = 1;
+        int n = random.nextInt(7);
+        //int n = 4;
+        if (heldBlock == null) heldBlock = pool[n];
         Tetromino fallingBlock =  pool[n];
+        System.out.println(heldBlock.toString());
+        if (bestMove.shouldYouHold(fallingBlock,heldBlock,TetrisBoard))
+        {
+                Tetromino placeholder = heldBlock;
+                heldBlock = fallingBlock;
+                fallingBlock = placeholder;
+                if (fallingBlock instanceof Long) n =6;
+        }
      //   System.out.println(fallingBlock.toString());
         expectedMoveIndex = bestMove.getMove(TetrisBoard,fallingBlock).component1();
         expectedMoveRotation = bestMove.getMove(TetrisBoard,fallingBlock).component2();
         for (int i=0; i<4; i++)
             for (int j = 0; j<4; j++)
             {
-                    if (i !=3 && j!=3) {
+                if (n==5)
+                {
+                    if (i<3 && j<3)
+                    {
+
                         if (fallingBlock.tileRotationSchemes[0][i][j] == 1)
                             TetrisBoard[i+offset][j+1] = 2;
                         isBlockBig = false;
                     }
-                    else if (n== 4 || n== 6)
+                }
+                    else if (i !=3 && j!=3) {
+                        if (fallingBlock.tileRotationSchemes[0][i][j] == 1)
+                            TetrisBoard[i+offset][j+1] = 2;
+                        isBlockBig = false;
+                    }
+                    else if (n== 6)
                     {
                         isBlockBig = true;
                         if (fallingBlock.tileRotationSchemes[0][i][j] == 1)

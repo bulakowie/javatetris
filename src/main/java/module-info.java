@@ -10,6 +10,7 @@ module com.example.tetris {
     requires org.kordamp.bootstrapfx.core;
     //requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires annotations;
 
     opens com.example.tetris to javafx.fxml;
     exports com.example.tetris;
